@@ -55,7 +55,7 @@ function M.setTab(tab)
 end
 
 function M.editorBaseConfiguration(columns, wrap_flag)
-  wrap_flag = wrap_flag | false
+  wrap_flag = wrap_flag or false
   options_local.wrap = wrap_flag
   options.cc = columns
   options.virtualedit = 'all'
