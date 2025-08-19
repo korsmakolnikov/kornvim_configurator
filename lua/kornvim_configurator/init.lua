@@ -28,7 +28,7 @@ end
 local function setEditorBehaviour()
   legacy_options.syntax = 'on'
   legacy_options.mouse = 'a'
-  options.matchpairs = options.matchpairs .. ",<:>"
+  options.matchpairs:append("<:>")
   options.splitright = true
   legacy_options.hlsearch = true
   legacy_options.incsearch = true
