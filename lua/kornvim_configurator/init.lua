@@ -34,7 +34,7 @@ local function setEditorBehaviour()
   legacy_options.incsearch = true
 
   -- shorten the messages in the message bar
-  legacy_options.shortmess = options.shortmess .. 'c'
+  legacy_options.shortmess = legacy_options.shortmess .. 'c'
 end
 
 local function setGlobals()
@@ -74,7 +74,7 @@ function M.editorBaseConfiguration(columns, wrap_flag)
 end
 
 local function setClipboard()
-  legacy_options.clipboard = options.clipboard .. 'unnamed,unnamedplus'
+  legacy_options.clipboard = legacy_options.clipboard .. 'unnamed,unnamedplus'
   if vim.fn.has('wsl') == 1 then
     globals.clipboard = {
       name = 'WslClipboard',
