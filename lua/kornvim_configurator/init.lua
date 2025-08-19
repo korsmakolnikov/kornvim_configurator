@@ -2,6 +2,7 @@
 -- personal vim setting collection
 local options = vim.opt
 local options_local = vim.opt_local
+local legacy_options = vim.o
 local globals = vim.g
 local M = {}
 
@@ -10,26 +11,26 @@ local function setBackupFolder()
 end
 
 local function setBaseCompletitionOptions()
-  options.wildmode = 'longest,list'
-  options.completeopt = 'menuone,noinsert,noselect'
+  legacy_options.wildmode = 'longest,list'
+  legacy_options.completeopt = 'menuone,noinsert,noselect'
 end
 
 local function setTheme()
   options.guifont = 'Fira Code Font:h14,Symbols Nerd Font'
-  options.cmdheight = 3
-  options.number = true
+  legacy_options.cmdheight = 3
+  legacy_options.number = true
 end
 
 local function setEditorBehaviour()
-  options.syntax = 'on'
-  options.mouse = 'a'
+  legacy_options.syntax = 'on'
+  legacy_options.mouse = 'a'
   options.matchpairs = options.matchpairs .. ",<:>"
   options.splitright = true
-  options.hlsearch = true
-  options.incsearch = true
+  legacy_options.hlsearch = true
+  legacy_options.incsearch = true
 
   -- shorten the messages in the message bar
-  options.shortmess = options.shortmess .. 'c'
+  legacy_options.shortmess = options.shortmess .. 'c'
 end
 
 local function setGlobals()
@@ -39,11 +40,14 @@ local function setGlobals()
   _G.Original_folder = vim.loop.cwd()
 end
 
+local function setSessionOptions()
+  options.sessionoptions = 'curdir,folds,globals,help,tabpages,terminal,winsize'
+end
+
 local function setSpell()
   -- create the folder site/spell in the vim data folder
   vim.fn.mkdir(vim.fn.stdpath("data") .. "site/spell", "p")
   options.spelllang = { "en_us", "it" }
-  options.sessionoptions = 'curdir,folds,globals,help,tabpages,terminal,winsize'
   options.spell = true
 end
 
@@ -57,25 +61,39 @@ end
 function M.editorBaseConfiguration(columns, wrap_flag)
   wrap_flag = wrap_flag or false
   options_local.wrap = wrap_flag
-  options.cc = columns
-  options.virtualedit = 'all'
-  options.autoindent = true
+  legacy_options.cc = columns
+  legacy_options.virtualedit = 'all'
+  legacy_options.autoindent = true
   options.encoding = "utf-8"
 end
 
 local function setClipboard()
-  options.clipboard = options.clipboard .. 'unnamed,unnamedplus'
+  legacy_options.clipboard = options.clipboard .. 'unnamed,unnamedplus'
+  if vim.fn.has('wsl') == 1 then
+    globals.clipboard = {
+      name = 'WslClipboard',
+      copy = {
+        ['+'] = 'clip.exe',
+        ['*'] = 'clip.exe',
+      },
+      paste = {
+        ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+      },
+      cache_enabled = 0,
+    }
+  end
 end
 
 local function termOptions()
   options.termguicolors = true
-  options.ttyfast = true
-  options.termguicolors = true
+  legacy_options.ttyfast = true
 end
 
 function M.setup()
   setGlobals()
   setBackupFolder()
+  setSessionOptions()
   M.editorBaseConfiguration('80')
   termOptions()
   M.setTab(2)
