@@ -6,6 +6,10 @@ local legacy_options = vim.o
 local globals = vim.g
 local M = {}
 
+M.tabSpace = 2
+M.wrapFlag = false
+M.columns = '80'
+
 local function setBackupFolder()
   options.backupdir = '~/.config/nvim/backup'
 end
@@ -36,7 +40,7 @@ end
 local function setGlobals()
   globals.mapleader = ","
   globals.loaded_python_provider = '0'
-  globals.goyo_width = '80'
+  globals.goyo_width = M.columns
   _G.Original_folder = vim.loop.cwd()
 end
 
@@ -52,6 +56,7 @@ local function setSpell()
 end
 
 function M.setTab(tab)
+  tab = tab or M.tabSpace
   options.tabstop = tab
   options.shiftwidth = tab
   options.softtabstop = tab
@@ -59,7 +64,8 @@ function M.setTab(tab)
 end
 
 function M.editorBaseConfiguration(columns, wrap_flag)
-  wrap_flag = wrap_flag or false
+  wrap_flag = wrap_flag or M.wrapFlag
+  columns = columns or M.columns
   options_local.wrap = wrap_flag
   legacy_options.cc = columns
   legacy_options.virtualedit = 'all'
@@ -94,9 +100,9 @@ function M.setup()
   setGlobals()
   setBackupFolder()
   setSessionOptions()
-  M.editorBaseConfiguration('80')
+  M.editorBaseConfiguration()
   termOptions()
-  M.setTab(2)
+  M.setTab()
   setClipboard()
   setSpell()
   setBaseCompletitionOptions()
